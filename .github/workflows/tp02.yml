@@ -128,20 +128,3 @@ jobs:
           # Note: tags has to be all lower-case
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-cpe:frontend
           push: ${{ github.ref == 'refs/heads/main' }}
-
-  send_deployement:
-    #needs:
-    #  - build_push_frontend
-    #  - build_push_api
-    #  - build_push_database
-    #  - build_push_httpd
-    runs-on: ubuntu-latest
-    steps:
-    - name: call the other repo
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        EVENT: on-demand-deployment
-        ORG: baptiste-pellarin
-        REPO: devops_s8_tp03
-      run: |
-        curl -d "{\"event_type\": \"${EVENT}\"}" -X POST -H "Content-Type: application/json" -H "Authorization: Bearer ${GITHUB_TOKEN}" "https://api.github.com/repos/${ORG}/${REPO}/dispatches"
