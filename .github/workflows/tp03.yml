@@ -1,0 +1,22 @@
+name: CI devops 2022 CPE auto-deployment
+on: 
+  repository_dispatch:
+    types: [on-demand-deployment]
+  push:
+    branches: 
+      - main
+      - develop
+    pull_request:
+
+jobs:
+  playbook_ansible:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Playbook deployment
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: ./TP03/setup_app.yml
+          key: ${{ secrets.PRIVATE_KEY }}
+          options: |
+            --inventory ./TP03/inventories/setup.yml

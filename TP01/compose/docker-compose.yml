@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+ spring:
+  build: ../simple_api/
+  networks:
+   - tp01
+  depends_on:
+   - psql_tp01
+
+ psql_tp01:
+  build: ../postgres/
+  networks:
+   - tp01
+  ports:
+   - "5432:5432"
+     
+ httpd:
+  build: ../http_server/
+  networks:
+   - tp01
+  depends_on:
+   - psql_tp01
+   - spring
+  ports:
+   - "80:80"
+
+networks:
+ tp01:
+  driver: bridge
+
+  

@@ -1,0 +1,7 @@
+- name: Installation de l'application
+  hosts: all
+  gather_facts: false
+  become: yes
+
+  roles:
+    - simple_api 

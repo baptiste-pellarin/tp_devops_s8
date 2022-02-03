@@ -1,0 +1,10 @@
+- name: Restart HTTPD
+  docker_container:
+    name: reverse_proxy
+    image: swano/tp-devops-cpe:http_server
+    state: started
+    restart: yes
+    exposed_ports:
+      - 80
+    links:
+      - "spring:spring"

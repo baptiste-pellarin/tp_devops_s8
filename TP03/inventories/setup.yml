@@ -1,0 +1,7 @@
+all:
+  vars:
+    ansible_user: centos
+    #ansible_ssh_private_key_file: ~/CPE/devOPS/TP03/ansible_priv_key
+  children:
+    prod:
+      hosts: baptiste.pellarin.takima.cloud

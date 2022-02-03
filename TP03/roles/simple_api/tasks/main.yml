@@ -1,0 +1,60 @@
+- name: Création du réseau d'interconnexion
+  docker_network:
+    name: tp03
+
+- name: Copy environement db
+  ansible.builtin.copy:
+    src: ./roles/simple_api/files/db.env
+    dest: db.env
+    mode: '0644'
+
+- name: Création du conteneur de la base de données
+  docker_container:
+    name: psql_tp01
+    pull: true
+    image: swano/tp-devops-cpe:database
+    env_file: db.env
+
+- name: Copy environement api
+  ansible.builtin.copy:
+    src: ./roles/simple_api/files/api.env
+    dest: api.env
+    mode: '0644'
+
+- name: Création du conteneur de l'application
+  docker_container:
+    name: spring
+    pull: true
+    image: swano/tp-devops-cpe:simple-api
+    links:
+      - "psql_tp01:psql_tp01" # Liaison avec la BDD
+    env_file: api.env
+
+- name: Création du conteneur de frontend
+  docker_container:
+    name: frontend
+    pull: true
+    image: swano/tp-devops-cpe:frontend
+
+
+- name: Création du conteneur pour le proxy 
+  docker_container:
+    name: reverse_proxy
+    pull: true
+    image: swano/tp-devops-cpe:http_server
+    ports:
+      - "80:80"  # On expose le port 80 sur la machine hôte
+      - "8080:8080"
+    links:
+      - "spring:spring" # Liaison avec spring
+      - "frontend:frontend"
+
+- name: Ajout des conteneurs au réseau précédement créé
+  docker_network:
+    name: tp03
+    connected:
+      - spring
+      - reverse_proxy
+      - psql_tp01
+      - frontend
+    appends: yes
